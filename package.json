@@ -1,0 +1,20 @@
+{
+  "name": "college-erp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && nodemon server.js",
+    "client": "cd client && npm run dev",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "seed": "cd server && node seeds/seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
