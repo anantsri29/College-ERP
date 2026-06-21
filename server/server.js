@@ -86,6 +86,13 @@ app.use((req, res, next) =>
 
 app.use(errorHandler);
 
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "College ERP API Running",
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
