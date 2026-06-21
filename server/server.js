@@ -74,39 +74,22 @@ app.use("/api/upload", uploadRoutes);
 // Serve static files from React build in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));
-  app.get("*", (req, res) => {
+
+  app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../client/dist/index.html"));
   });
 }
 
-// Catch-all 404 (compatible across router versions)
 app.use((req, res, next) =>
   next(new AppError(`Route ${req.originalUrl} not found.`, 404)),
 );
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
+
 server.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`Server running on port ${PORT} [${process.env.NODE_ENV}]`);
 });
 
 module.exports = { app, server, io };
-app.use("/api/leaves", leaveRoutes);
-app.use("/api/upload", uploadRoutes);
-
-// React Frontend
-const path = require("path");
-
-app.use(express.static(path.join(__dirname, "../client/dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
-});
-
-// 404 Handler LAST
-app.use((req, res, next) =>
-  next(new AppError(`Route ${req.originalUrl} not found.`, 404)),
-);
-
-app.use(errorHandler);
