@@ -55,6 +55,23 @@ exports.createNotification = async (req, res, next) => {
   try {
     const { title, message, type, recipientRole, recipients, department, semester, priority, expiresAt } = req.body;
     const notification = await Notification.create({ title, message, type, sender: req.user._id, recipientRole, recipients, department, semester, priority, expiresAt });
+    
+    // Emit socket notification to all recipients
+    const io = req.app.get("io");
+    const notificationData = notification.toObject();
+    
+    if (recipientRole === "all") {
+      io.emit("notification:new", notificationData);
+    } else if (recipientRole === "students" || recipientRole === "teachers" || recipientRole === "subadmins") {
+      io.emitToRole(recipientRole.replace(/s$/, ""), "notification:new", notificationData);
+    } else if (recipientRole === "department" && department) {
+      io.emitToDepartment(department, "notification:new", notificationData);
+    } else if (Array.isArray(recipients) && recipients.length > 0) {
+      recipients.forEach((recipientId) => {
+        io.emitToUser(recipientId, "notification:new", notificationData);
+      });
+    }
+    
     res.status(201).json({ success: true, message: "Notification sent.", data: notification });
   } catch (err) {
     next(err);

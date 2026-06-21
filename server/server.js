@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const dotenv = require("dotenv");
+const path = require("path");
 
 dotenv.config();
 
@@ -70,6 +71,14 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/leaves", leaveRoutes);
 app.use("/api/upload", uploadRoutes);
 
+// Serve static files from React build in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+  });
+}
+
 // Catch-all 404 (compatible across router versions)
 app.use((req, res, next) =>
   next(new AppError(`Route ${req.originalUrl} not found.`, 404)),
@@ -83,3 +92,21 @@ server.listen(PORT, () => {
 });
 
 module.exports = { app, server, io };
+app.use("/api/leaves", leaveRoutes);
+app.use("/api/upload", uploadRoutes);
+
+// React Frontend
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
+
+// 404 Handler LAST
+app.use((req, res, next) =>
+  next(new AppError(`Route ${req.originalUrl} not found.`, 404)),
+);
+
+app.use(errorHandler);
