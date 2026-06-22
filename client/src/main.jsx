@@ -7,10 +7,9 @@ import "./index.css";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext";
 import { SocketProvider } from "./context/SocketContext";
-
 const queryClient = new QueryClient();
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -23,4 +22,4 @@ createRoot(document.getElementById('root')).render(
       <Toaster position="top-right" />
     </QueryClientProvider>
   </StrictMode>,
-)
+);
